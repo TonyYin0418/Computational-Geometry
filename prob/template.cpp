@@ -32,8 +32,7 @@ struct Point{
 		return sqrt(x * x + y * y);
 	}
 };
-typedef Point Vec;
-inline bool cmp1(Vec a, Vec b) {
+inline bool cmp1(Point a, Point b) {
 	return (fcmp(a.x, b.x) == -1) ||
 		   (!fcmp(a.x, b.x) && fcmp(a.y, b.y) == -1);
 }
@@ -46,11 +45,11 @@ inline double dis(Point &a, Point &b) {
 inline double angle(Point &a, Point &b) {
 	return acos((a & b) / a.len() / b.len());
 }
-inline Vec rotate(Vec &a, double k) {
-	return Vec(a.x * cos(k) - a.y * sin(k), a.x * sin(k) - a.y * cos(k));
+inline Point rotate(Point &a, double k) {
+	return Point(a.x * cos(k) - a.y * sin(k), a.x * sin(k) - a.y * cos(k));
 }
 inline bool check(Point s1, Point s2, Point p) {
-	return Vec(s2, s1) * Vec(s1, p) > 0;
+	return Point(s2, s1) * Point(s1, p) > 0;
 }
 int Convex_hull_2d(int n, Point *p, Point *ret)
 {
