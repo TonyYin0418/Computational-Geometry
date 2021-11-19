@@ -51,26 +51,42 @@ inline Point rotate(Point &a, double k) {
 inline bool check(Point s1, Point s2, Point p) {
 	return Point(s2, s1) * Point(s1, p) > 0;
 }
-int Convex_hull_2d(int n, Point *p, Point *ret)
-{
+
+/*
+int Convex_hull_2d(int n, Point *p, Point *ret) {
 	sort(p, p + n, cmp1);
 	ret[0] = p[0], ret[1] = p[1];
 	int top = 1;
-	for (int i = 2; i < n; i++)
-	{
+	for (int i = 2; i < n; i++) {
 		while (top > 0&& !check(ret[top], ret[top - 1], p[i]))
 			top--;
 		ret[++top] = p[i];
 	}
 	int k = top;
 	ret[++top] = p[n - 2];
-	for (int i = n - 3; i >= 0; i--)
-	{
+	for (int i = n - 3; i >= 0; i--) {
 		while (top > k && !check(ret[top], ret[top - 1], p[i]))
 			top--;
 		ret[++top] = p[i];
 	}
-	return (top + 1);
+	return top;
+}*/
+
+int Convex_hull_2d(int n, Point *p, Point *ret) {
+	sort(p, p + n, cmp1);
+	int top = -1;
+	for (int i = 0; i < n; i++) {
+		while (top > 0 && !check(ret[top], ret[top - 1], p[i]))
+			top--;
+		ret[++top] = p[i];
+	}
+	int k = top;
+	for (int i = n - 2; i >= 0; i--) {
+		while (top > k && !check(ret[top], ret[top - 1], p[i]))
+			top--;
+		ret[++top] = p[i];
+	}
+	return top;
 }
 
 struct Point3 {
