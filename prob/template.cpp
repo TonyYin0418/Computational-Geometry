@@ -39,6 +39,12 @@ inline bool cmp1(Point a, Point b) {
 inline bool cmp2(Point &a, Point &b) {
 	return a * b > 0;
 }
+bool cmp(Point a, Point b) {
+    if(atan2(a.y, a.x) - atan2(b.y, b.x) == 0)
+        return a.x < b.x;
+    return atan2(a.y, a.x) < atan2(b.y, b.x);
+}
+
 inline double dis(Point &a, Point &b) {
 	return (a - b).len();
 }
