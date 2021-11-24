@@ -14,7 +14,7 @@
 
 **平行向量**：方向相同或相反的两个 **非零** 向量。规定 $\vec 0$ 与任意向量平行。$\boldsymbol{a}$ 与 $\boldsymbol{b}$ 平行，记作：$\boldsymbol{a}\parallel \boldsymbol{b}$ 。
 
-**共线向量：**与平行向量的定义相同。任一组平行向量都可以平移到同一直线上。
+###### **共线向量：**与平行向量的定义相同。任一组平行向量都可以平移到同一直线上。
 
 **向量的夹角**：已知两个非零向量 $\boldsymbol a,\boldsymbol b$，作 $\overrightarrow{OA}=\boldsymbol a,\overrightarrow{OB}=\boldsymbol b$，那么 $\theta=\angle AOB$ 就是向量 $\boldsymbol a$ 与向量 $\boldsymbol b$ 的夹角。记作：$\langle \boldsymbol a,\boldsymbol b\rangle$。当 $\theta=\frac{\pi}{2}$ 时，称这两个向量垂直，记作 $\boldsymbol a\perp \boldsymbol b$。规定 $\theta \in [0,\pi]$。
 
