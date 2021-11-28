@@ -204,6 +204,30 @@ Andrew 算法是一种递增式算法，流程如下。
 
 如上图，若将弹出栈顶元素的条件改为 $\overrightarrow{S_2S_1}\times \overrightarrow{S_1P}\leq 0$，同时停止条件改为 $\overrightarrow{S_2S_1}\times \overrightarrow{S_1P}> 0$，则求出的凸包中不存在三点共线。可视情况更改。
 
+下面是参考代码。函数返回值为凸包的点数，`Point ret[] `的下标从 $0$ 开始。
+
+```cpp
+inline bool check(Point s1, Point s2, Point p) {
+	return Vec(s2, s1) * Vec(s1, p) > 0;
+}
+int Convex_hull_2d(int n, Point *p, Point *ret) {
+	sort(p, p + n, cmp1);
+	int top = -1;
+	for (int i = 0; i < n; i++) {
+		while (top > 0 && !check(ret[top], ret[top - 1], p[i]))
+			top--;
+		ret[++top] = p[i];
+	}
+	int k = top;
+	for (int i = n - 2; i >= 0; i--) {
+		while (top > k && !check(ret[top], ret[top - 1], p[i]))
+			top--;
+		ret[++top] = p[i];
+	}
+	return top;
+}
+```
+
 ## Graham算法
 
 Andrew 算法是 Graham 算法的改进版本。在 Graham 算法中，点集按照极角序排序。
@@ -229,6 +253,48 @@ bool cmp(Point a, Point b) {
 ```
 
 注意极角排序时，无论用 `atan2` 还是叉积，精度上都会出现不少问题，尽量避免使用这种方法。
+
+## 平面凸包的周长与面积
+
+先求出**按照顺时针排序**的，构成凸包的点集 $p$，记 $n=|p|$.
+
+**求周长：**把相邻两点组成的向量的模长求和，即：
+$$
+l=\sum_{i=1}^n|\overrightarrow{p_{i}p_{i+1}}|+|\overrightarrow{p_{1}p_{n}}|
+$$
+
+```cpp
+double dis(Point a, Point b) {
+	return (a - b).len();
+}
+double Convex_hull_2d_L(int n, Point *p) {
+	Point convex[N];
+	int siz = Convex_hull_2d(n, p, convex);
+	double ans = dis(convex[0], convex[siz - 1]);
+	for (int i = 1; i < siz; i++)
+		ans += dis(convex[i - 1], convex[i]);
+	return ans;
+}
+```
+
+**求面积：**任取凸包内一点（一般取 $p_1$），则有：
+$$
+s=\sum_{i=2}^{n-1} \operatorname{area}(p_1, p_i, p_i+1)=\sum_{i=2}^{n-1}\frac{|(p_i-p_1)\times (p_{i+1}-p_1)|}{2}
+$$
+
+```cpp
+double area(Point a, Point b, Point c) {
+	return (b - a) * (c - a) / 2.0;
+}
+double Convex_hull_2d_S(int n, Point *p) {
+	Point convex[N];
+	int siz = Convex_hull_2d(n, p, convex);
+	double ans = 0;
+	for (int i = 2; i < siz; i++)
+		ans += area(convex[0], convex[i - 1], convex[i]);
+	return ans;
+}
+```
 
 ## 动态凸包（CF70D）
 
@@ -370,10 +436,10 @@ struct Point3 {
 	double x, y, z;
 	Point3(){};
 	Point3(double a, double b, double c) : x(a), y(b), z(c) {}
-}
+};
 ```
 
-**加法、减法和点乘**：与二维向量类似。
+**加法、减法和点乘等操作**：与二维向量类似。
 
 ```cpp
 Point3 operator + (const Point3 &b) {
@@ -382,8 +448,14 @@ Point3 operator + (const Point3 &b) {
 Point3 operator - (const Point3 &b) {
     return Point3(x - b.x, y - b.y, z - b.z);
 }
-double operator & (const Point3 &b) {
-    return x * b.x + y * b.y + z * b.z;
+Point3 operator * (const Point3 &b) {
+    return Point3(y*b.z - z*b.y, z*b.x - x*b.z, x*b.y - y*b.x);
+}
+bool operator == (const Point3 &b) {
+    return fcmp(x, b.x) == 0 && fcmp(y, b.y) == 0 && fcmp(z, b.z) == 0;
+}
+double len() {
+    return sqrt(x * x + y * y + z * z);
 }
 ```
 
@@ -441,6 +513,40 @@ Point3 operator * (const Point3 &b) {
 }
 ```
 
+## 平面类
+
+用三个向量表示一个三角形的平面。一个多面体可以通过三角剖分，用若干个三角形表示。
+
+为了节省空间，用 `point3 p[N]` 存储所有可能出现的向量，结构体`plane`只记录向量在 `p[]` 中的下标。
+
+记录的三个向量按逆时针首尾相接，这样在判断方向时比较方便。
+
+```cpp
+struct plane{
+	int v[3]; //逆时针
+	plane(){};
+	plane(int a, int b, int c) { v[0] = a, v[1] = b, v[2] = c; }
+};
+```
+
+**平面的法向量：**是指垂直于该平面的三维向量。一个平面具有无限个法向量，这些法向量有两个方向。
+
+根据叉积的性质，将三角形的两条邻边叉乘，得到的向量即为法向量。
+
+```cpp
+Point3 normal() {
+    return (p[v[1]] - p[v[0]]) * (p[v[2]] - p[v[0]]);
+}
+```
+
+利用法向量的模长，也可以算出三角形的面积。
+
+```cpp
+double area() {
+    return normal().len() / 2.0;
+}
+```
+
 ## 三维凸包及性质
 
 由 $n$ 个点构成的凸多面体。
@@ -448,4 +554,95 @@ Point3 operator * (const Point3 &b) {
 **性质：**根据欧拉公式，任意包含 $n$ 个顶点的凸多面体，所含的边不会超过 $3n-6$ 条，所含的小平面不会超过 $2n-4$ 张。
 
 ## 随机增量法
+
+### 算法思想
+
+和 Andrew 算法类似，考虑每次把 $p_r$ 加入到前 $r-1$ 个点的凸包中，也就是将 $\mathcal{CH}(P_{r-1})$ 转化为 $\mathcal{CH}(P_{r})$.
+
+**第一种情况：**$p_r$ 在 $\mathcal{CH}(P_{r-1})$ 的内部或边界上，则 $\mathcal{CH}(P_{r-1})\rightarrow \mathcal{CH}(P_{r})$.
+
+**第二种情况：**$p_r$ 在 $\mathcal{CH}(P_{r-1})$ 外部。设想你站在 $p_r$ 所在的位置，看向 $\mathcal{CH}(P_{r-1})$. $\mathcal{CH}(P_{r-1})$ 中的某些小平面会被看到，其余在背面的平面不会被看到。如下图，从 $p_r$ 可见的平面构成了一片连通的区域。
+
+<img src="md-fig/fig11.pdf" style="zoom: 200%;" />
+
+这片区域由一条封闭折线围成，称这条线为 $p_r$ 在 $\mathcal{CH}(P_{r-1})$ 上的**边界线** $(\rm{horizon})$。
+
+根据这条地平线，我们可以判断出，在原先 $\mathcal{CH}(P_{r-1})$ 表面上的哪些部分需要被保留，哪些需要被替换。
+
+显然，不可见的平面在 $\mathcal{CH}(P_{r})$ 中被保留，并且我们用 $p_r$ 与地平线之间连接出新的小平面，来替换所有可见的小平面，如下图。
+
+<img src="md-fig/fig12.pdf" style="zoom: 200%;" />
+
+### 判断平面对点的可见性
+
+如何用几何语言表达：一个平面对 $p_r$ 是可见的？
+
+<img src="md-fig/fig13.pdf" style="zoom: 200%;" />
+
+对于一个凸包上的小平面，它能将空间分为两半，一侧是凸包外部，一侧是凸包内部。容易发现，如果点 $p$ 位于小平面的外侧，那么这个平面对于 $p$ 点就是可见的，因为凸包上的其它平面都不会有遮挡。
+
+形式化地，记 $a,b,c$ 为平面三角形的三个顶点，从凸包外部看，三点按照逆时针排列。
+
+利用叉乘的性质，记 $\boldsymbol{s}=\overrightarrow{ab}\times \overrightarrow{ac}$，则结果向量 $\boldsymbol{s}$ 是一个平面的法向量，且指向凸包外部。
+
+对于空间内任意一点 $p$，若 $\overrightarrow{ap}\times \boldsymbol{s}>0$，则这个平面对点 $p$ 是可见的。
+
+下面是定义在结构体 `plane` 中的函数，用于判断点 $A$ 是否位于平面的外侧。
+
+```cpp
+bool is_above(Point3 A) {
+    return (normal() & (A - p[v[0]])) >= 0;
+}
+```
+
+### 求出边界线
+
+要想把凸包从 $\mathcal{CH}(P_{r-1})$ 转化为 $\mathcal{CH}(P_{r})$，我们需要准确地求出凸包上的哪些边在边界线上。求出边界线之后，才能用 $p$ 与边界线构成的小平面替换需要被删掉的小平面。
+
+定义 `bool g[N][N]`，$g[i][j]$ 表示 $\overrightarrow{p_ip_j}$ 所在的平面是否可见。
+
+若规定平面 $(a,b,c)$ 只包含 $\overrightarrow{ab},\overrightarrow{bc},\overrightarrow{ca}$，则对于任意有序数对 $(i, j)$，向量 $\overrightarrow{p_ip_j}$ 最多被包含在一个平面内。
+
+注意到，位于边界线上的向量 $\overrightarrow{p_ip_j}$ 一定满足 $g[i][j]=1$ 且 $g[j][i]=0$。所以我们只需对每个平面判断其可见性，并更新在 `g[][]` 中对应的数值，即可求出边界线。
+
+### 利用边界线更新凸包
+
+在上一步遍历小平面时，只在凸包中保留不可见的小平面。
+
+对于可见的小平面，若 $\overrightarrow{p_ip_j}$ 在边界线上，则把 $(p_i, p_j, p_r)$ 加入凸包中。$p_r$ 是新加入凸包的点。
+
+### 参考代码
+
+函数返回值为三维凸包的平面数，`plane ret[] `的下标从 $0$ 开始。
+
+```cpp
+int Convex_hull_3d(int n, plane *ret) {
+	plane tmp[N];
+	bool g[N][N];
+	for (int i = 0; i < n; i++) p[i].shake();
+	int top = -1;
+	ret[++top] = plane(0, 1, 2);
+	ret[++top] = plane(0, 2, 1);
+	for (int i = 3; i < n; i++) {
+		int cnt = -1;
+		for (int j = 0; j <= top; j++) {
+			bool flag = ret[j].is_above(p[i]);
+			if (!flag)
+				tmp[++cnt] = ret[j];
+			for (int k = 0; k < 3; k++)
+				g[ret[j].v[k]][ret[j].v[(k + 1) % 3]] = flag;
+		}
+		for (int j = 0; j <= top; j++) {
+			for (int k = 0; k < 3; k++) {
+				int a = ret[j].v[k], b = ret[j].v[(k + 1) % 3];
+				if (g[a][b] && !g[b][a])
+					tmp[++cnt] = plane(a, b, i);
+			}
+		}
+		for (int j = 0; j <= cnt; j++) ret[j] = tmp[j];
+		top = cnt;
+	}
+	return (top + 1);
+}
+```
 
