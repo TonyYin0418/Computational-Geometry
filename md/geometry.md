@@ -142,7 +142,7 @@ inline Vec rotate(Vec &a, double k) {
 }
 ```
 
-# 凸包
+# 平面凸包
 
 ## 相关概念
 
@@ -196,9 +196,11 @@ Andrew 算法是一种递增式算法，流程如下。
 
 上图是一个弹栈的例子，$p_i$ 是新加入的点，细线是加入 $p_i$ 之前的凸包状态。
 
-若将弹出栈顶元素的条件改为 $\overrightarrow{S_2S_1}\times \overrightarrow{S_1P}\leq 0$，同时停止条件改为 $\overrightarrow{S_2S_1}\times \overrightarrow{S_1P}> 0$，则求出的凸包中不存在三点共线，可视情况更改。
-
 记 $n=|P|$，则时间复杂度为 $\mathcal{O}(n\log n)$，瓶颈在排序部分。
+
+<img src="/Users/TonyYin/Desktop/OneDrive/Computational-Geometry/参考资料/计算几何·算法与应用/figures/figures01/figures01 - 12.pdf" style="zoom: 150%;" />
+
+如上图，若将弹出栈顶元素的条件改为 $\overrightarrow{S_2S_1}\times \overrightarrow{S_1P}\leq 0$，同时停止条件改为 $\overrightarrow{S_2S_1}\times \overrightarrow{S_1P}> 0$，则求出的凸包中不存在三点共线。可视情况更改。
 
 ## Graham算法
 
@@ -218,16 +220,30 @@ bool cmp(Point a, Point b) {
 
 另外一种方式是利用叉积排序。
 
+```cpp
+bool cmp(Point a, Point b) {
+    return a * b > 0;                       
+}
+```
+
 注意极角排序时，无论用 `atan2` 还是叉积，精度上都会出现不少问题，尽量避免使用这种方法。
 
 ## 动态凸包
 
 维护一个点集 $S$ 的凸包，需要支持如下操作：
 
+- 询问点 $p$ 是否在当前的凸包中，
 - 向 $S$ 中添加点 $p$，
-- 询问点 $p$ 是否在当前的凸包上，
 - 从 $S$ 中删除点 $p$.
 
-和 Andrew 算法一样，这里的算法按照坐标排序。相对于极角排序，能够减小精度误差。
+和 Andrew 算法一样，这里的算法按照坐标字典序排序。相对于极角排序，能够减小精度误差。
 
-用两个 `std::map` 分别维护上下凸包。 
+用两个 `std::map<double, double>`，用 $\operatorname{top}$ 记录上凸包，$\operatorname{down}$ 记录下凸包。
+
+**存储方法：**若上凸包中存在横坐标为 $x$ 的点，则这个点的纵坐标为 $\operatorname{top}[x]$，$\operatorname{down}$ 同理。
+
+### 判断点是否在凸包中
+
+只需满足：在上凸包之下，且在下凸包之上。
+
+<img src="md-fig/fig0.pdf" style="zoom: 150%;" />
