@@ -30,26 +30,26 @@ struct Point{
 };
 map<int, int> top, down;
 bool check_top(int x, int y) { //是否在上凸包下面
-	auto it = top.lower_bound(x);
-	if(it == top.end())
+	auto k = top.lower_bound(x);
+	if(k == top.end())
 		return false;
-	if(it -> first == x)
-		return y <= it->second;
-	if(it == top.begin()) return false;
-	auto jt = it; jt--;
-	return Point(x - it->first, y - it->second) *
-		   Point(x - jt->first, y - jt->second) >= 0;
+	if(k -> first == x)
+		return y <= k->second;
+	if(k == top.begin()) return false;
+	auto j = k; j--;
+	return Point(k->first - x, k->second - y) *
+		   Point(j->first - x, j->second - y) >= 0;
 }
 bool check_down(int x, int y) { //是否在下凸包上面
-	auto it = down.lower_bound(x);
-	if(it == down.end())
+	auto k = down.lower_bound(x);
+	if(k == down.end())
 		return false;
-	if(it -> first == x)
-		return y >= it->second;
-	if(it == down.begin()) return false;
-	auto jt = it; jt--;
-	return Point(x - it->first, y - it->second) *
-		   Point(x - jt->first, y - jt->second) <= 0;
+	if(k -> first == x)
+		return y >= k->second;
+	if(k == down.begin()) return false;
+	auto j = k; j--;
+	return Point(k->first - x, k->second - y) *
+		   Point(j->first - x, j->second - y) <= 0;
 }
 bool remove_top(map<int, int>::iterator it) {
 	if(it == top.begin()) return false; //到边界就不删了
