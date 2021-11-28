@@ -1,41 +1,30 @@
-\documentclass[a4paper, UTF8]{ctexart}
-\usepackage[top=1.5cm,bottom=1.5cm,left=2cm,right=2cm,marginparwidth=1.75cm]{geometry}
-\linespread{1.2}
-\usepackage{amsmath}
+\documentclass{standalone}
+\usepackage{standalone}
 \usepackage{tikz}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{listings}
 \usepackage{caption}
 \usepackage{fancyhdr}
-
-\fancyhead{} % 删除所有页眉
 \begin{document}
-\pagestyle{plain}
-\captionsetup[figure]{labelformat={default},labelsep=period}
+% \begin{framed}
+\begin{tikzpicture}
+\node (a) at (0, 0) {};
+\node (b) at (1, 2) {};
+\node (c) at (3, 4) {};
+\node (d) at (5, 5) {};
+\node (e) at (7, 3) {};
+\node (f) at (8, 1) {};
+\node (g) at (5,-2) {};
+\node (p) at (4, 8) {};
 
-\begin{figure}[H]
-	\centering
-	% \begin{framed}
-	\begin{tikzpicture}
-	\filldraw
-		(0,0) circle (.2)
-		(1,2) circle (.2)
-		(3,4) circle (.2)
-		(5,5) circle (.2)
-		(7,3) circle (.2)
-		(8,1) circle (.2)
-		(5,-2) circle (.2)
-	;
-	\draw[ultra thick] (0,0)--(1,2) (1,2)--(3,4) (3,4)--(5,5) (5,5)--(7,3) (7,3)--(8,1);
-	\draw[dashed, ultra thick] (0,0)--(5,-2) (8,1)--(5,-2);
-	\filldraw[color=blue] (4,8) circle (.2);
-	\draw[dashed, ultra thick, color=blue] (4,8)--(1,2) (4,8)--(3,4) (4,8)--(5,5) (4,8)--(7,3);
-	\node (p) at (4.6,7.9) [font=\fontsize{17.28}{0}\selectfont] {$p$};
-	\end{tikzpicture}
-	% \end{framed}
-	% \caption{}
-	\label{fig:1}
-\end{figure}
+\filldraw (a) circle (.2) (b) circle (.2) (c) circle (.2) (d) circle (.2) (e) circle (.2) (f) circle (.2) (g) circle (.2) ;
+\draw[ultra thick] (a)--(b) (b)--(c) (c)--(d) (d)--(e) (e)--(f);
+\draw[dashed, ultra thick] (a)--(g) (f)--(g);
+\filldraw[color=blue] (p) circle (.2);
+\draw[dashed, ultra thick, color=blue] (p)--(b) (p)--(c) (p)--(d) (p)--(e);
+\node (p) at (4.6,7.9) [font=\fontsize{17.28}{0}\selectfont] {$p$};
+\end{tikzpicture}
+% \end{framed}
 
 \end{document}
