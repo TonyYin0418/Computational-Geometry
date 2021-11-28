@@ -2,8 +2,6 @@
 #define int long long
 using namespace std;
 const int N = 1000;
-const double pi = 3.1415926535898;
-const double eps = 1e-10;
 struct Point{
 	int x, y;
 	Point(){};
