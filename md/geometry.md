@@ -1,6 +1,6 @@
 # 向量
 
-## 向量
+## 平面向量
 
 **向量：** 既有大小又有方向的量称为向量，记作 $\vec {a}$ 或 $\boldsymbol a$。
 
@@ -150,11 +150,11 @@ inline Vec rotate(Vec &a, double k) {
 
 **凸多边形：**所有内角大小都在 $[0,\pi]$ 范围内的 **简单多边形**。
 
-<img src="md-fig/fig2.pdf" style="zoom: 200%;" />
+<img src="md-fig/fig2.svg" style="zoom: 200%;" />
 
 **平面凸包：**平面上的一个子集 $S$ 被称为凸的，当且仅当对于任意两点 $p, q\in S$，线段 $\overline{pq}$ 都完全属于 $S$.集合 $S$ 的凸包 $\mathcal{CH}(S)$，是包含 $S$ 的最小凸集，也就是包含 $S$ 的所有凸集的交。
 
-<img src="md-fig/fig3.pdf" style="zoom: 200%;" />
+<img src="md-fig/fig3.svg" style="zoom: 200%;" />
 
 如上图，凸包还可以理解为平面上有若干柱子，**用橡皮筋套住所有柱子**，绷紧后形成的多边形即为凸包。
 
@@ -166,7 +166,7 @@ inline Vec rotate(Vec &a, double k) {
 
 用二维坐标 $(x_i, y_i)$ 的形式给定点集 $P$，考虑如何暴力求解。
 
-<img src="md-fig/fig4.pdf" style="zoom: 200%;" />
+<img src="md-fig/fig4.svg" style="zoom: 200%;" />
 
 注意到，若线段 $\overline{pq}$ 在凸包上，则 $P$ 中的点均位于直线 $pq$ 的同一侧。若我们钦定 $p\rightarrow q$ 按顺时针方向，则有更强的限制，需要 $P$ 中的点都在直线的右侧。
 
@@ -194,13 +194,13 @@ Andrew 算法是一种递增式算法，流程如下。
 
 求凸包时，若 $P$ 与 $S_1$ 构成的新线段是顺时针旋转的，即叉积满足：$\overrightarrow{S_2S_1}\times \overrightarrow{S_1P}<0$，则弹出栈顶，继续检查，直到 $\overrightarrow{S_2S_1}\times \overrightarrow{S_1P}\ge 0$ 或者栈内仅剩一个元素为止。
 
-<img src="md-fig/fig5.pdf" style="zoom: 200%;" />
+<img src="md-fig/fig5.svg" style="zoom: 200%;" />
 
 上图是一个弹栈的例子，$p_i$ 是新加入的点，细线是加入 $p_i$ 之前的凸包状态。
 
 记 $n=|P|$，则时间复杂度为 $\mathcal{O}(n\log n)$，瓶颈在排序部分。
 
-<img src="md-fig/fig6.pdf" style="zoom: 200%;" />
+<img src="md-fig/fig6.svg" style="zoom: 200%;" />
 
 如上图，若将弹出栈顶元素的条件改为 $\overrightarrow{S_2S_1}\times \overrightarrow{S_1P}\leq 0$，同时停止条件改为 $\overrightarrow{S_2S_1}\times \overrightarrow{S_1P}> 0$，则求出的凸包中不存在三点共线。可视情况更改。
 
@@ -317,7 +317,7 @@ double Convex_hull_2d_S(int n, Point *p) {
 
 只需满足：**在上凸包之下**且**在下凸包之上**。
 
-<img src="md-fig/fig7.pdf" style="zoom: 100%;" />
+<img src="md-fig/fig7.svg" style="zoom: 100%;" />
 
 以上凸包为例。$i$ 在上凸包之下，当且仅当 $|\overrightarrow{ik}\times \overrightarrow{ij}|\geq 0$.
 
@@ -357,7 +357,7 @@ bool check_down(int x, int y) { //是否在下凸包上面
 
 把 $p$ 点加入凸包，上下凸包都要尝试。把加入 $p$ 点后，删掉不满足凸性的点。
 
-<img src="md-fig/fig8.pdf" style="zoom: 100%;" />
+<img src="md-fig/fig8.svg" style="zoom: 100%;" />
 
 如上图，这些点一定是分布在 $p_x$ 左右的连续段。
 
@@ -563,7 +563,7 @@ double area() {
 
 **第二种情况：**$p_r$ 在 $\mathcal{CH}(P_{r-1})$ 外部。设想你站在 $p_r$ 所在的位置，看向 $\mathcal{CH}(P_{r-1})$. $\mathcal{CH}(P_{r-1})$ 中的某些小平面会被看到，其余在背面的平面不会被看到。如下图，从 $p_r$ 可见的平面构成了一片连通的区域。
 
-<img src="md-fig/fig11.pdf" style="zoom: 200%;" />
+<img src="md-fig/fig11.svg" style="zoom: 200%;" />
 
 这片区域由一条封闭折线围成，称这条线为 $p_r$ 在 $\mathcal{CH}(P_{r-1})$ 上的**边界线** $(\rm{horizon})$。
 
@@ -571,13 +571,13 @@ double area() {
 
 显然，不可见的平面在 $\mathcal{CH}(P_{r})$ 中被保留，并且我们用 $p_r$ 与地平线之间连接出新的小平面，来替换所有可见的小平面，如下图。
 
-<img src="md-fig/fig12.pdf" style="zoom: 200%;" />
+<img src="md-fig/fig12.svg" style="zoom: 200%;" />
 
 ### 判断平面对点的可见性
 
 如何用几何语言表达：一个平面对 $p_r$ 是可见的？
 
-<img src="md-fig/fig13.pdf" style="zoom: 200%;" />
+<img src="md-fig/fig13.svg" style="zoom: 200%;" />
 
 对于一个凸包上的小平面，它能将空间分为两半，一侧是凸包外部，一侧是凸包内部。容易发现，如果点 $p$ 位于小平面的外侧，那么这个平面对于 $p$ 点就是可见的，因为凸包上的其它平面都不会有遮挡。
 
@@ -607,9 +607,9 @@ bool is_above(Point3 A) {
 
 ### 利用边界线更新凸包
 
-在上一步遍历小平面时，只在凸包中保留不可见的小平面。
+在上一步遍历小平面时，若遇到的小平面是不可见的，则把它加入新的凸包中；若可见，则单独记录。
 
-对于可见的小平面，若 $\overrightarrow{p_ip_j}$ 在边界线上，则把 $(p_i, p_j, p_r)$ 加入凸包中。$p_r$ 是新加入凸包的点。
+之后遍历所有可见的小平面，若 $\overrightarrow{p_ip_j}$ 在边界线上，则把 $(p_i, p_j, p_r)$ 加入凸包中。$p_r$ 是新加入凸包的点。这样加入后的三点也满足逆时针排列。
 
 ### 参考代码
 
@@ -645,4 +645,36 @@ int Convex_hull_3d(int n, plane *ret) {
 	return (top + 1);
 }
 ```
+
+# 旋转卡壳
+
+## 概述
+
+旋转卡壳算法用于：在线性时间内，求凸包直径、最小矩形覆盖等于凸包性质相关的问题。线性时间是指求出凸包之后的算法时间复杂度。
+
+## 求凸包直径
+
+> 给定平面上的 $n$ 个点，求所有点对之间的最长距离。$2\leq n\leq 50000, |x|, |y|\leq 10^4$.
+
+首先，求出这 $n$ 个点的凸包，复杂度可以做到为 $\mathcal{O}(n\log n)$，如何求直径？
+
+**暴力做法：**可以遍历每个点对，求出最大距离，复杂度为 $\mathcal{O}(n^2)$.
+
+### 算法流程
+
+可以遍历凸包上的边，对每条边 $(a, b)$，去找距离这条边最远的点 $p$。对于 $p$ 点，距离它最远的点，一定是 $a,b$ 中的一个。 
+
+我们发现，若逆时针遍历凸包上的边，那么随着边的转动，对应的最远点也在逆时针旋转。
+
+因此，我们可以在逆时针枚举边的同时，实时维护最远点，利用单调性，复杂度为 $\mathcal{O}(n)$.
+
+<img src="md-fig/fig14.gif" style="zoom: 150%;" />
+
+### 算法实现
+
+求凸包时，若使用 Andrew 算法，则凸包上的点已经按照逆时针排序了。问题在如何判断下一个点到当前边的距离是否更大。
+
+一种方法是用点到直线距离公式，但利用叉积的精度更高，也更方便。
+
+<img src="md-fig/fig15.svg" style="zoom: 100%;" />
 
