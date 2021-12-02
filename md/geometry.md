@@ -678,3 +678,28 @@ int Convex_hull_3d(int n, plane *ret) {
 
 <img src="md-fig/fig15.svg" style="zoom: 100%;" />
 
+```cpp
+struct Point{
+	int x, y;
+    //......
+	int sqr_len() { return x * x + y * y; }
+};
+inline int sqr_dis(Point a, Point b) { return (a - b).sqr_len(); }
+int Get_Max(int n, Point *ch) {//传入convex-hull
+	int ret = 0;
+	ch[n] = ch[0];
+	int j = 1;
+	for(int i = 0; i < n; i++) {
+		while((ch[i] - ch[j+1]) * (ch[i+1] - ch[j+1]) >
+			  (ch[i] - ch[j]) * (ch[i+1] - ch[j]))
+			j = (j + 1) % n;
+		ret = max(ret, max(sqr_dis(ch[i], ch[j]), sqr_dis(ch[i+1], ch[j])));
+	}
+	return ret;
+}
+```
+
+## 最小矩形覆盖
+
+> 给定一些点的坐标，求能够覆盖所有点的最小面积的矩形。$3\leq n\leq 50000$.
+
