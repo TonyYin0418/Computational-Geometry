@@ -23,6 +23,7 @@
 		"vector": "cpp",
 		"algorithm": "cpp",
 		"complex": "cpp",
-		"valarray": "cpp"
+		"valarray": "cpp",
+		"cwchar": "cpp"
 	}
 }
