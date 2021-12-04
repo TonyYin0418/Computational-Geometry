@@ -248,7 +248,7 @@ bool cmp(Point a, Point b) {
 
 ```cpp
 bool cmp(Point a, Point b) {
-    return a * b > 0;                       
+    return a * b > 0;
 }
 ```
 
@@ -425,7 +425,7 @@ bool remove_down(map<int, int>::iterator it) {
 
 ## 三维向量类
 
-<img src="md-fig/fig9.svg" style="zoom: 50%;" />
+<img src="md-fig/fig9.svg" style="zoom: 80%;" />
 
 **存储：**用结构体记录三维坐标，方便重载运算符。
 
@@ -459,7 +459,7 @@ double len() {
 
 **叉乘：**$\vec a\times \vec b$ 的结果为一个三维向量 $\vec c$，$\vec c\perp \vec a$ 且 $\vec c\perp \vec b$，结果向量的模长为 $|\vec a||\vec b|\sin \langle \vec a,\vec b\rangle$，代表以 $\vec a$、$\vec b$ 为两边的平行四边形的面积。
 
-<img src="md-fig/fig10.svg" style="zoom: 50%;" />
+<img src="md-fig/fig10.svg" style="zoom: 80%;" />
 
 在三维向量体系中，我们需要用坐标表示结果向量 $\boldsymbol{a}$，推导过程如下。（来源：[叉积 - 维基百科](https://zh.wikipedia.org/wiki/%E5%8F%89%E7%A7%AF)）
 
@@ -660,7 +660,7 @@ int Convex_hull_3d(int n, plane *ret) {
 
 ### 算法流程
 
-可以遍历凸包上的边，对每条边 $(a, b)$，去找距离这条边最远的点 $p$。对于 $p$ 点，距离它最远的点，一定是 $a,b$ 中的一个。 
+可以遍历凸包上的边，对每条边 $(a, b)$，去找距离这条边最远的点 $p$。对于 $p$ 点，距离它最远的点，一定是 $a,b$ 中的一个。
 
 我们发现，若逆时针遍历凸包上的边，那么随着边的转动，对应的最远点也在逆时针旋转。
 
@@ -674,7 +674,7 @@ int Convex_hull_3d(int n, plane *ret) {
 
 一种方法是用点到直线距离公式，但利用叉积的精度更高，也更方便。
 
-<img src="md-fig/fig15.svg" style="zoom: 150%;" />
+<img src="md-fig/fig15.svg" style="zoom: 120%;" />
 
 ```cpp
 struct Point{
@@ -699,6 +699,123 @@ int Get_Max(int n, Point *ch) {//传入convex-hull
 
 ## 最小矩形覆盖
 
-> 给定一些点的坐标，求能够覆盖所有点的最小面积的矩形。$3\leq n\leq 50000$.
+### 题意
 
-<img src="md-fig/fig16.svg" style="zoom: 150%;" />
+给定一些点的坐标，求能够覆盖所有点的最小面积的矩形。
+
+求出矩形面积、顶点坐标。$3\leq n\leq 50000$.
+
+### 分析
+
+先求出凸包，之后用旋转卡壳维护三个边界点。
+
+利用叉积和点积，可以求出矩形面积及四个顶点的坐标。
+
+### 实现
+
+<img src="md-fig/fig16.svg" style="zoom: 120%;" />
+
+下面是一种可行的表示方法。
+
+设 $H=|P_0P_3|=\frac{|\overrightarrow{AB}\times \overrightarrow{BU}|}{|AB|}$，$L=\frac{|\overrightarrow{BA}\cdot \overrightarrow{AL}|}{|BA|}$，$R=\frac{|\overrightarrow{AB}\cdot \overrightarrow{BR}|}{|AB|}$.
+
+则矩形面积为：
+$$
+S=H\times (L+|\overrightarrow{AB}|+R)
+$$
+顶点坐标为：
+$$
+\begin{array}{l}
+&\overrightarrow{P_0}&=&\overrightarrow A+L\times \frac{\overrightarrow{BA}}{|\overrightarrow{BA}|}\\
+&\overrightarrow{P_1}&=&\overrightarrow B+R\times \frac{\overrightarrow{AB}}{|\overrightarrow{AB}|}\\
+&\overrightarrow{P_2}&=&\overrightarrow P_1+H\times \frac{\overrightarrow{P_1R}}{|\overrightarrow{P_1R}|}\\
+&\overrightarrow{P_3}&=&\overrightarrow P_0+H\times \frac{\overrightarrow{P_0L}}{|\overrightarrow{P_0L}|}
+\end{array}
+$$
+若不需要求出顶点坐标，也可以这样表示矩形面积：
+$$
+S=\frac{|\overrightarrow{AB}\times \overrightarrow{BU}|\times (|\overrightarrow{AD}\cdot\overrightarrow{AB}|+|\overrightarrow{BC}\cdot\overrightarrow{BA}|-|\overrightarrow{AB}\cdot\overrightarrow{BA}|)}{|\overrightarrow{AB}\cdot\overrightarrow{BA}|}
+$$
+设 $|\overrightarrow{P_0B}|=m$，$|\overrightarrow{AP_1}|=n$ 后易证。
+
+### 代码
+
+```cpp
+double Get_Max(int n, Point *ch) {
+	ch[n] = ch[0];
+	int u = 2, l, r = 2;
+	//u是距离AB最远的点；在AB为底时，l和r是两个最靠边的点
+	double ret = 1e100, H, L, R, S;
+	for(int i = 0; i < n; i++) {
+		Point A = ch[i], B = ch[i+1]; Vec AB = B - A, BA = A - B;
+		while((AB * Vec(B, ch[u+1])) >= (AB * Vec(B, ch[u])))
+			u = (u + 1) % n;
+		while((AB & Vec(B, ch[r+1])) >= (AB & Vec(B, ch[r])))
+			r = (r + 1) % n;
+		if(i == 0) l = r;
+		while((AB & Vec(B, ch[l+1])) <= (AB & Vec(B, ch[l])))
+			l = (l + 1) % n;
+		H = (AB * Vec(B, ch[u])) / AB.len(); //以AB所在直线为底边，矩形的高
+		L = (BA & Vec(A, ch[l])) / BA.len(); //A距离左侧顶点的距离
+		R = (AB & Vec(B, ch[r])) / AB.len(); //B距离右侧顶点的距离
+		S = H * (L + AB.len() + R); //矩形面积
+		if(S < ret) { //求矩形顶点坐标
+			ret = S;
+			P[0] = A + L * BA.unit();
+			P[1] = B + R * AB.unit();
+			P[2] = P[1] + H * (ch[r]-P[1]).unit();
+			P[3] = P[0] + H * (ch[l]-P[0]).unit();
+		}
+	}
+	return ret;
+}
+```
+
+## POJ2079 - Triangle
+
+### 题意
+
+给定平面上的 $n$ 个点，从其中任选三个点作为顶点，求能构成的最大三角形面积。
+
+$1\leq n\leq 50000$.
+
+### 分析
+
+显然，三角形的顶点一定都在这 $n$ 个点的凸包上，所以先求出凸包。
+
+考虑旋转卡壳。
+
+这题中不能固定一条边，再枚举另外两个点，因为三角形的边不一定在凸包上。
+
+因此，先逆时针枚举一个固定点 $i$，再逆时针旋转另外两个顶点 $j$ 和 $k$.·
+
+由于凸包上的一些单峰性，我们旋转 $j$ 时停止的条件是 $S_{\triangle ijk}$ 最大，停止后固定 $j$，以相同停止条件旋转 $k$.
+
+$S_{\triangle ijk}$ 最大，是指 $S_{\triangle i,j\operatorname{\_last},k}<S_{\triangle ijk}$ 且 $S_{\triangle ijk}>S_{\triangle i,j\operatorname{\_next},k}$.
+
+### 代码
+
+注意特判 $n\leq 2$ 以及凸包大小 $\operatorname{siz}\leq 2$ 的情况。
+
+```cpp
+double Get_Max(int n, Point *ch) {
+	double ret = 0;
+	ch[n] = ch[0];
+	int j = 1, k = 2;
+	for(int i = 0; i < n; i++) {
+		while(Vec(ch[i], ch[j]) * Vec(ch[i], ch[k]) <
+			  Vec(ch[i], ch[j]) * Vec(ch[i], ch[k+1]))
+			k = (k + 1) % n;
+		while(Vec(ch[i], ch[j]) * Vec(ch[i], ch[k]) <
+			  Vec(ch[i], ch[j+1]) * Vec(ch[i], ch[k]))
+			j = (j + 1) % n;
+		ret = max(ret, Vec(ch[i], ch[j]) * Vec(ch[i], ch[k]));
+	}
+	return ret;
+}
+```
+
+# 半平面交
+
+## 概述
+
