@@ -24,6 +24,9 @@
 		"algorithm": "cpp",
 		"complex": "cpp",
 		"valarray": "cpp",
-		"cwchar": "cpp"
+		"cwchar": "cpp",
+		"functional": "cpp",
+		"iostream": "cpp",
+		"chrono": "cpp"
 	}
 }
