@@ -87,22 +87,23 @@ int n;
 Point p[MAXN], convex[MAXN], P[MAXN];
 double Get_Max(int n, Point *ch) {
 	ch[n] = ch[0];
-	int j = 2, l, r = 2;
-	double ret = 1e100;
+	int u = 2, l, r = 2;
+	//u是距离AB最远的点；在AB为底时，l和r是两个最靠边的点
+	double ret = 1e100, H, L, R, S;
 	for(int i = 0; i < n; i++) {
 		Point A = ch[i], B = ch[i+1]; Vec AB = B - A, BA = A - B;
-		while((AB * Vec(B, ch[j+1])) >= (AB * Vec(B, ch[j])))
-			j = (j + 1) % n;
+		while((AB * Vec(B, ch[u+1])) >= (AB * Vec(B, ch[u])))
+			u = (u + 1) % n;
 		while((AB & Vec(B, ch[r+1])) >= (AB & Vec(B, ch[r])))
 			r = (r + 1) % n;
 		if(i == 0) l = r;
 		while((AB & Vec(B, ch[l+1])) <= (AB & Vec(B, ch[l])))
 			l = (l + 1) % n;
-		double H = (AB * Vec(B, ch[j])) / AB.len();
-		double L = (BA & Vec(A, ch[l])) / BA.len();
-		double R = (AB & Vec(B, ch[r])) / AB.len();
-		double S = H * (L + AB.len() + R);
-		if(S < ret) {
+		H = (AB * Vec(B, ch[u])) / AB.len(); //以AB所在直线为底边，矩形的高
+		L = (BA & Vec(A, ch[l])) / BA.len(); //A距离左侧顶点的距离
+		R = (AB & Vec(B, ch[r])) / AB.len(); //B距离右侧顶点的距离
+		S = H * (L + AB.len() + R); //矩形面积
+		if(S < ret) { //求矩形顶点坐标
 			ret = S;
 			P[0] = A + L * BA.unit();
 			P[1] = B + R * AB.unit();
@@ -119,7 +120,9 @@ signed main() {
 	double ans = Get_Max(siz, convex);
 	printf("%.5lf\n", ans);
 	int st = 0;
-	for(int i = 1; i < 4; i++) if(P[i].y < P[st].y || (P[i].y == P[st].y && P[i].x < P[st].x)) st = i;
+	for(int i = 1; i < 4; i++)
+		if(P[i].y < P[st].y || (P[i].y == P[st].y && P[i].x < P[st].x))
+			st = i;
 	for(int i = st; i < st + 4; i++) {
 		if(!sign(P[i%4].x)) P[i%4].x = 0;
 		if(!sign(P[i%4].y)) P[i%4].y = 0;
