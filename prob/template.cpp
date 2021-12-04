@@ -9,27 +9,36 @@ inline int fcmp(double x, double y) { //x>y->1, x=y->0, x<y->-1
 }
 inline double rd() { return (rand()) % 2 ? eps : -eps; }
 struct Point{
-	double x, y;
+	int x, y;
 	Point(){};
-	Point(double a, double b): x(a), y(b) {}
+	Point(int a, int b): x(a), y(b) {}
 	Point(Point a, Point b): x(b.x - a.x), y(b.y - a.y) {}
-	Point operator + (const Point &b) {
-		return Point(x + b.x, y + b.y);
+	friend Point operator + (const Point &a, const Point &b) {
+		return Point(a.x + b.x, a.y + b.y);
 	}
-	Point operator - (const Point &b) {
-		return Point(x - b.x, y - b.y);
+	friend Point operator - (const Point &a, const Point &b) {
+		return Point(a.x - b.x, a.y - b.y);
 	}
-	double operator * (const Point &b) {
-		return x * b.y - y * b.x;
+	friend bool operator == (const Point &a, const Point &b) {
+		return fcmp(a.x, b.x) == 0 && fcmp(a.y, b.y == 0);
 	}
-	double operator & (const Point &b) {
-		return x * b.x + y * b.y;
+	friend Point operator * (const double &a, const Point &b) {
+		return Point(a * b.x, a * b.y);
 	}
-	bool operator == (const Point &b) {
-		return fcmp(x, b.x) == 0 && fcmp(y, b.y) == 0;
+	friend Point operator * (const Point &a, const double &b) {
+		return Point(a.x * b, a.y * b);
 	}
-	double len() {
-		return sqrt(x * x + y * y);
+	friend int operator * (const Point &a, const Point &b) {
+		return a.x * b.y - a.y * b.x;
+	}
+	friend int operator & (const Point &a, const Point &b) {
+		return a.x * b.x + a.y * b.y;
+	}
+	friend bool operator < (const Point &a, const Point &b) {
+		return (a.x < b.x) || (a.x == b.x && a.y < b.y);
+	}
+	inline double len() {
+		return sqrt(1.0 * x * x + 1.0 * y * y);
 	}
 };
 inline bool cmp1(Point a, Point b) {
