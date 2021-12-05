@@ -103,7 +103,12 @@ $$
 ## 参考代码
 
 ```cpp
-const double eps = 1e-10;
+const double pi = 3.1415926535898;
+const double eps = 1e-8;
+inline int sgn(double x) {
+	if(fabs(x) < eps) return 0;
+	else return x > 0 ? 1 : -1;
+}
 inline int fcmp(double x, double y) {
 	if(fabs(x - y) < eps) return 0;
 	else return x > y ? 1 : -1;
@@ -113,23 +118,38 @@ struct Point{
 	Point(){};
 	Point(double a, double b): x(a), y(b) {}
 	Point(Point a, Point b): x(b.x - a.x), y(b.y - a.y) {}
-	Point operator + (const Point &b) {
-		return Point(x + b.x, y + b.y);
+	friend Point operator + (const Point &a, const Point &b) {
+		return Point(a.x + b.x, a.y + b.y);
 	}
-	Point operator - (const Point &b) {
-		return Point(x - b.x, y - b.y);
+	friend Point operator - (const Point &a, const Point &b) {
+		return Point(a.x - b.x, a.y - b.y);
 	}
-	double operator * (const Point &b) {
-		return x * b.y - y * b.x;
+	friend bool operator == (const Point &a, const Point &b) {
+		return fcmp(a.x, b.x) == 0 && fcmp(a.y, b.y == 0);
 	}
-	double operator & (const Point &b) {
-		return x * b.x + y * b.y;
+	friend Point operator * (const double &a, const Point &b) {
+		return Point(a * b.x, a * b.y);
 	}
-	bool operator == (const Point &b) {
-		return fcmp(x, b.x) == 0 && fcmp(y, b.y) == 0;
+	friend Point operator * (const Point &a, const double &b) {
+		return Point(a.x * b, a.y * b);
 	}
-	double len() {
-		return sqrt(x * x + y * y);
+	friend double operator * (const Point &a, const Point &b) {
+		return a.x * b.y - a.y * b.x;
+	}
+	friend double operator & (const Point &a, const Point &b) {
+		return a.x * b.x + a.y * b.y;
+	}
+	friend Point operator / (const Point &a, const double &b) {
+		return Point(a.x / b, a.y / b);
+	}
+	friend bool operator < (const Point &a, const Point &b) {
+		return (a.x < b.x) || (a.x == b.x && a.y < b.y);
+	}
+	inline double len() {
+		return sqrt(1.0 * x * x + 1.0 * y * y);
+	}
+	friend double area(Point &a, Point &b, Point &c) {
+		return (b - a) * (c - a) / 2.0;
 	}
 };
 typedef Point Vec;
@@ -795,7 +815,7 @@ $S_{\triangle ijk}$ 最大，是指 $S_{\triangle i,j\operatorname{\_last},k}<S_
 
 ### 代码
 
-注意特判 $n\leq 2$ 以及凸包大小 $\operatorname{siz}\leq 2$ 的情况。
+注意特判 $n\leq 2$ 以及凸包大小 $\operatorname{siz}\leq 2$ 的情况。用叉积求面积。
 
 ```cpp
 double Get_Max(int n, Point *ch) {
@@ -817,5 +837,176 @@ double Get_Max(int n, Point *ch) {
 
 # 半平面交
 
-## 概述
+## 半平面
+
+半平面是**一条直线和直线的一侧**，是一个点集。
+
+当点集包含直线时，称为闭半平面；当不包含直线时，称为开半平面。
+
+## 直线类
+
+在计算几何中，用 $(\vec s, \vec t)$ 表示直线 ${st}$，一般统一保留向量的左侧半平面。
+
+### 求两直线的交
+
+<img src="md-fig/fig17.svg" style="zoom: 140%;" />
+
+若交点存在，只需求出 $t=\dfrac{|A_sP|}{|A_sA_t|}$，则 $\vec P=\overrightarrow{A_s}+t\cdot  \overrightarrow{A_sA_t}$.
+
+注意到 $t=\dfrac{|A_sP|}{|A_sA_t|}=\dfrac{|\overrightarrow{B_sB_t}\times \overrightarrow{B_sA_s}|}{|\overrightarrow{B_sB_t}\times \overrightarrow{A_sA_t}|}$，证明也不难。
+
+如上图，把 $\overrightarrow{A_sA_t}$ 平移到 $\overrightarrow{B_sC}$ 的位置，则可以把叉乘的模看作平行四边形面积。
+
+记 $S_1=|\overrightarrow{B_sB_t}\times \overrightarrow{B_sA_s}|$，$S_2=|\overrightarrow{B_sB_t}\times \overrightarrow{A_sA_t}|$，由于两个平行四边形同底，所以有 $\dfrac{S_1}{S_2}=\dfrac{|A_sM|}{|CN|}$.
+
+又因为 $\triangle A_sMP\sim \triangle CNB_s$，所以 $\dfrac{S_1}{S_2}=\dfrac{|A_sM|}{|CN|}=\dfrac{|A_sP|}{|CB_s|}=\dfrac{|A_sP|}{|A_sA_t|}$.
+
+### 参考代码
+
+```cpp
+struct Line{
+	Point s, t;
+	Line() {};
+	Line(Point a, Point b) : s(a), t(b) {}
+	double ang() { return atan2((t - s).y, (t - s).x); };
+	Line(double a, double b, double c) { //ax + by + c = 0
+		if(sgn(a) == 0) s = Point(0, -c/b), t = Point(1, -c/b);
+		else if(sgn(b) == 0) s = Point(-c/a, 0), t = Point(-c/a, 1);
+		else s = Point(0, -c/b), t = Point(1, (-c-a)/b);
+	}
+	friend bool parallel(const Line &A, const Line &B) {
+		return sgn((A.s - A.t) * (B.s - B.t)) == 0;
+	}
+	friend bool Calc_intersection(const Line &A, const Line &B, Point &res) {
+		if(parallel(A, B)) return false;
+		double s1 = (B.t - B.s) * (B.s - A.s);
+		double s2 = (B.t - B.s) * (A.t - A.s);
+		res = A.s + (A.t - A.s) * (s1 / s2);
+		return true;
+	}
+};
+```
+
+## 半平面交
+
+半平面交是**多个半平面的交集**。
+
+半平面交是一个点集，并且是一个凸集。在直角坐标系上是一个区域。
+
+半平面交在代数意义下，是若干个线性约束条件，每个约束条件形如：
+$$
+a_ix+b_iy\leq c_i
+$$
+其中 $a_i, b_i, c_i$ 为常数，且 $a_i$ 和 $b_i$ 不都为零。
+
+半平面交有下面五种可能情况，每个半平面位于边界直线的阴影一侧。
+
+<img src="md-fig/fig18.pdf" style="zoom: 200%;" />
+
+$\rm{(iii)}$ 和 $\rm{(v)}$ 比较特殊，我们一般假设产生的交集总是有界或空的。
+
+## 性质
+
+注意到，位于半平面交边界上的任何一个点，必定来自某张半平面的边界。
+
+并且，因为半平面交是凸集，所以每条边界线最多只能为边界贡献一条边。
+
+因此：**由 $n$ 张半平面相交而成的凸多边形，其边界最多由 $n$ 条边围成**。
+
+## Sort-and-Incremental Algorithm
+
+S&I 算法，排序增量法。
+
+### 算法思想
+
+S&I 算法利用了性质：半平面交是凸集。
+
+因为半平面交是凸集，所以我们**维护凸壳**。
+
+若我们把半平面按极角排序，那么在过程中，**只可能删除队首或队尾的元素**，因此使用**双端队列**维护。
+
+下面是一个例子。
+
+TODO.
+
+### 算法流程
+
+1. 把半平面按照极角序排序，需要 $\mathcal{O}(n\log n)$ 的时间。
+2. 对每个半平面，执行一次增量过程，每次根据需要弹出双端队列的头部或尾部元素。这是线性的，因为每个半平面只会被增加或删除一次。
+3. 最后，通过双端队列中的半平面，在线性时间内求出半平面交（一个凸多边形，用若干顶点描述）。
+
+这样，我们得到了一个时间复杂度为 $\mathcal{O}(n\log n)$ 的算法，瓶颈在于排序。因此，若题目给定的半平面满足极角序，则我们可以在线性的时间内求出半平面交。
+
+### 极角排序
+
+注意判断不要写成 `<=` 或 `>=`。
+
+```cpp
+inline bool cmp(Line A, Line B) {
+	//极角相等时，位置靠右的排在前面
+	if(!sgn(A.ang - B.ang)) return (A.t - A.s) * (B.t - A.s) > 0;
+	return A.ang < B.ang;
+}
+```
+
+### 求半平面交
+
+```cpp
+bool Halfplane_intersection(int n, Line *hp, Point *p) {
+	if(n < 3) return false;
+	sort(hp, hp + n, cmp);
+	Halfplane_unique(n, hp);
+	st = 0; ed = 1;
+	que[0] = 0; que[1] = 1;
+	if(parallel(hp[0], hp[1])) return false;
+	Calc_intersection(hp[0], hp[1], p[1]);
+	for(int i = 2; i < n; i++) {
+		while(st < ed &&
+			  sgn((hp[i].t - hp[i].s) * (p[ed] - hp[i].s)) < 0)
+			ed--;
+		while(st < ed &&
+			  sgn((hp[i].t - hp[i].s) * (p[st + 1] - hp[i].s)) < 0)
+			st++;
+		que[++ed] = i;
+		assert(ed >= 1);
+		if(parallel(hp[i], hp[que[ed - 1]])) return false;
+		Calc_intersection(hp[i], hp[que[ed - 1]], p[ed]);
+	}
+	while(st < ed &&
+		  sgn((hp[que[st]].t - hp[que[st]].s) * (p[ed] - hp[que[st]].s)) < 0)
+		ed--;
+	while(st < ed &&
+		  sgn((hp[que[ed]].t - hp[que[ed]].s) * (p[st + 1] - hp[que[ed]].s)) < 0)
+		st++;
+	if(st + 1 >= ed) return false;
+	return true;
+}
+```
+
+### 求凸多边形的顶点
+
+```cpp
+int Get_convex_hull(Line *hp, Point *p, Point *ch) {
+	Calc_intersection(hp[que[st]], hp[que[ed]], p[st]);
+	for(int i = 0, j = st; j <= ed; i++, j++) ch[i] = p[j];
+	return ed - st + 1;
+}
+```
+
+### 计算面积
+
+```cpp
+double Calc_area(int n, Point *ch) {
+	double ans = 0;
+	for (int i = 2; i < n; i++)
+		ans += area(ch[0], ch[i - 1], ch[i]);
+	return ans;
+}
+```
+
+# 参考资料
+
+
+
+https://cp-algorithms.com/geometry/halfplane-intersection.html
 

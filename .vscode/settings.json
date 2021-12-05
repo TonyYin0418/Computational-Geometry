@@ -27,6 +27,12 @@
 		"cwchar": "cpp",
 		"functional": "cpp",
 		"iostream": "cpp",
-		"chrono": "cpp"
+		"chrono": "cpp",
+		"memory": "cpp",
+		"numeric": "cpp",
+		"ratio": "cpp",
+		"limits": "cpp",
+		"cassert": "cpp",
+		"random": "cpp"
 	}
 }
