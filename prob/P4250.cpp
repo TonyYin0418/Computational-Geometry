@@ -55,10 +55,9 @@ struct Line{
 	Line() {};
 	Line(Point a, Point b) : s(a), t(b) {}
 	double ang() { return atan2((t - s).y, (t - s).x); };
-	Line(double a, double b, double c) { //ax + by + c = 0
-		if(sgn(a) == 0) s = Point(0, -c/b), t = Point(1, -c/b);
-		else if(sgn(b) == 0) s = Point(-c/a, 0), t = Point(-c/a, 1);
-		else s = Point(0, -c/b), t = Point(1, (-c-a)/b);
+	Line(double A, double B, double C) { //ax + by + c = 0
+        if(sgn(B) == 0) s = Point(-C/A,0), t = Point(-C/A-B,A);
+        else s = Point(0, -C/B), t = Point(-B,-C/B+A);
 	}
 	friend bool parallel(const Line &A, const Line &B) {
 		return sgn((A.s - A.t) * (B.s - B.t)) == 0;
@@ -127,20 +126,31 @@ double Calc_area(int n, Point *ch) {
 }
 int main() {
 	int n, N = 0;
+	double Area;
 	cin >> n;
-	for(int i = 1, m; i <= n; i++) {
-		cin >> m;
-		for(int j = 0; j < m; j++)
-			cin >> in[j].x >> in[j].y;
-		for(int j = 0; j < m; j++) {
-			L[N++] = Line(in[j], in[(j+1) % m]);
-		}
+	for(int i = 0; i < n; i++) cin >> in[i].x >> in[i].y;
+	in[n] = in[0];
+	for(int i = 0; i < n; i++) {
+		L[N++] = Line(in[i], in[i + 1] - in[i]);
+		Area += in[i] * in[i + 1];
 	}
-	if(Halfplane_intersection(N, L, p)) {
+	for(int i = 1; i < n; i++) { //ax + by = c;
+		double a = in[0].y - in[1].y - in[i].y + in[i + 1].y;
+		double b = in[1].x - in[0].x + in[i].x - in[i + 1].x;
+		double c = in[0].x * in[1].y - in[i].x * in[i + 1].y
+				  -in[1].x * in[0].y + in[i + 1].x * in[i].y;
+		cout << a << " " << b << " " << c << endl;
+		L[N++] = Line(a, b, c);
+	}
+	for(int i = 0; i < N; i++) {
+		cout << L[i].s.x << " " << L[i].s.y << ", " << L[i].t.x << " " << L[i].t.y << endl;
+	}
+	// if(Halfplane_intersection(N, L, p)) {
 		int siz = Get_convex_hull(L, p, convex);
+		// double Area2 = Calc_area(siz, convex);
 		printf("%.3lf\n", Calc_area(siz, convex));
-	} else {
-		printf("0.000\n");
-	}
+	// } else {
+	// 	printf("0.000\n");
+	// }
 	return 0;
 }

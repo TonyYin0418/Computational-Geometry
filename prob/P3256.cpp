@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
+#define int long long
+#define double long double
 using namespace std;
-const int MAXN = 30000;
+const int MAXN = 1e4 + 10;
 const double pi = 3.1415926535898;
-const double eps = 1e-8;
+const double eps = 1e-18;
 inline int sgn(double x) {
 	if(fabs(x) < eps) return 0;
 	else return x > 0 ? 1 : -1;
@@ -50,10 +52,13 @@ struct Point{
 		return (b - a) * (c - a) / 2.0;
 	}
 } in[MAXN], p[MAXN], convex[MAXN];
+typedef Point Vec;
 struct Line{
 	Point s, t;
+	vector<int> id;
 	Line() {};
 	Line(Point a, Point b) : s(a), t(b) {}
+	Line(Point a, Point b, vector<int> c) : s(a), t(b), id(c) {}
 	double ang() { return atan2((t - s).y, (t - s).x); };
 	Line(double a, double b, double c) { //ax + by + c = 0
 		if(sgn(a) == 0) s = Point(0, -c/b), t = Point(1, -c/b);
@@ -114,33 +119,32 @@ bool Halfplane_intersection(int n, Line *hp, Point *p) {
 	if(st + 1 >= ed) return false;
 	return true;
 }
-int Get_convex_hull(Line *hp, Point *p, Point *ch) {
-	Calc_intersection(hp[que[st]], hp[que[ed]], p[st]);
-	for(int i = 0, j = st; j <= ed; i++, j++) ch[i] = p[j];
-	return ed - st + 1;
-}
-double Calc_area(int n, Point *ch) {
-	double ans = 0;
-	for (int i = 2; i < n; i++)
-		ans += area(ch[0], ch[i - 1], ch[i]);
-	return ans;
-}
-int main() {
-	int n, N = 0;
+signed main() {
+	int n, x[MAXN], v[MAXN], N = 0;
+	map<pair<int, int>, vector<int> > mp;
 	cin >> n;
-	for(int i = 1, m; i <= n; i++) {
-		cin >> m;
-		for(int j = 0; j < m; j++)
-			cin >> in[j].x >> in[j].y;
-		for(int j = 0; j < m; j++) {
-			L[N++] = Line(in[j], in[(j+1) % m]);
+	for(int i = 1; i <= n; i++) cin >> x[i];
+	for(int i = 1; i <= n; i++) cin >> v[i];
+
+	for(int i = 1; i <= n; i++) mp[make_pair(x[i], v[i])].push_back(i);
+	L[N++] = Line(Point(0, 1), Point(0, 0));
+	L[N++] = Line(Point(0, 0), Point(1, 0));
+	for(auto it = mp.begin(); it != mp.end(); it++) {
+		pair<int, int> tmp = it -> first;
+		L[N++] = Line(Point(0, tmp.first),
+					  Point(1, tmp.first+tmp.second), it -> second);
+	}
+
+	Halfplane_intersection(N, L, p);
+
+	int ans[MAXN], cnt_ans = 0;
+	for(int i = st + 1; i <= ed; i++) {
+		for(int j = 0; j < L[que[i]].id.size(); j++) {
+			ans[cnt_ans++] = L[que[i]].id[j];
 		}
 	}
-	if(Halfplane_intersection(N, L, p)) {
-		int siz = Get_convex_hull(L, p, convex);
-		printf("%.3lf\n", Calc_area(siz, convex));
-	} else {
-		printf("0.000\n");
-	}
+	sort(ans, ans + cnt_ans);
+	cout << cnt_ans << endl;
+	for(int i = 0; i < cnt_ans; i++) cout << ans[i] << " "; cout << endl;
 	return 0;
 }

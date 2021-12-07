@@ -12,7 +12,7 @@
 
 **单位向量**：模为 $1$ 的向量称为该方向上的单位向量。
 
-**平行向量**：方向相同或相反的两个 **非零** 向量。规定 $\vec 0$ 与任意向量平行。$\boldsymbol{a}$ 与 $\boldsymbol{b}$ 平行，记作：$\boldsymbol{a}\parallel \boldsymbol{b}$ 。
+**平行向量**：方向相同或相反的两个 **非零** 向量。规定 $\boldsymbol 0$ 与任意向量平行。$\boldsymbol{a}$ 与 $\boldsymbol{b}$ 平行，记作：$\boldsymbol{a}\parallel \boldsymbol{b}$ 。
 
 **共线向量：**与平行向量的定义相同。任一组平行向量都可以平移到同一直线上。
 
@@ -38,11 +38,11 @@
 
 若要求和的两个向量 **共起点**，那么它们的和向量为以这两个向量为邻边的平行四边形的对角线，起点为两个向量共有的起点，方向沿平行四边形对角线方向。
 
-#### 向量的减法
+### 向量的减法
 
 减法可以写成加上相反数的形式，即：$a-b=a+(-b)$，如图1，$b=c-a$，$a=c-b$.
 
-#### 向量的数乘
+### 向量的数乘
 
 给定一个实数 $\lambda$ 和一个向量 $\boldsymbol a$，规定其乘积为一个向量，记作 $\lambda \boldsymbol a$，其模与方向定义如下：
 
@@ -51,7 +51,7 @@
 
 这种运算是向量的数乘运算。
 
-#### 坐标表示
+### 坐标表示
 
 $$
 \boldsymbol a + \boldsymbol b=(\boldsymbol a_x+\boldsymbol b_x,\;\boldsymbol a_y+\boldsymbol b_y)\\
@@ -90,7 +90,7 @@ $$
 
 向量积与 $\boldsymbol a,\boldsymbol b$ 所在平面垂直，其竖坐标为 $\boldsymbol a_x\boldsymbol b_y-\boldsymbol a_y\boldsymbol b_x$.
 
-我们根据右手法则可以推断出 $\boldsymbol b$ 相对于 $\boldsymbol a$ 的方向，逆时针方向竖坐标为正值，反之为负值。
+我们根据右手法则可以推断出 $\boldsymbol b$ 相对于 $\boldsymbol a$ 的方向，**逆时针方向竖坐标为正值，反之为负值**。
 
 ## 坐标旋转公式
 
@@ -316,7 +316,7 @@ double Convex_hull_2d_S(int n, Point *p) {
 }
 ```
 
-## 动态凸包（CF70D）
+# 动态凸包（CF70D）
 
 维护一个点集 $S$ 的凸包，需要支持如下操作：
 
@@ -325,7 +325,7 @@ double Convex_hull_2d_S(int n, Point *p) {
 
 保证坐标均为整数。
 
-### 分析
+## 分析
 
 和 Andrew 算法一样，这里的算法按照坐标字典序排序。相对于极角排序，能够减小精度误差。
 
@@ -333,7 +333,7 @@ double Convex_hull_2d_S(int n, Point *p) {
 
 **存储方法：**若上凸包中存在横坐标为 $x$ 的点，则这个点的纵坐标为 $\operatorname{top}[x]$，$\operatorname{down}$ 同理。
 
-### 询问操作
+## 询问操作
 
 只需满足：**在上凸包之下**且**在下凸包之上**。
 
@@ -371,7 +371,7 @@ bool check_down(int x, int y) { //是否在下凸包上面
 }
 ```
 
-### 插入操作
+## 插入操作
 
 把 $p$ 点加入凸包，上下凸包都要尝试。把加入 $p$ 点后，删掉不满足凸性的点。
 
@@ -477,7 +477,7 @@ double len() {
 }
 ```
 
-**叉乘：**$\vec a\times \vec b$ 的结果为一个三维向量 $\vec c$，$\vec c\perp \vec a$ 且 $\vec c\perp \vec b$，结果向量的模长为 $|\vec a||\vec b|\sin \langle \vec a,\vec b\rangle$，代表以 $\vec a$、$\vec b$ 为两边的平行四边形的面积。
+**叉乘：**$\boldsymbol a\times \boldsymbol b$ 的结果为一个三维向量 $\boldsymbol c$，$\boldsymbol c\perp \boldsymbol a$ 且 $\boldsymbol c\perp \boldsymbol b$，结果向量的模长为 $|\boldsymbol a||\boldsymbol b|\sin \langle \boldsymbol a,\boldsymbol b\rangle$，代表以 $\boldsymbol a$、$\boldsymbol b$ 为两边的平行四边形的面积。
 
 <img src="md-fig/fig10.svg" style="zoom: 80%;" />
 
@@ -845,13 +845,13 @@ double Get_Max(int n, Point *ch) {
 
 ## 直线类
 
-在计算几何中，用 $(\vec s, \vec t)$ 表示直线 ${st}$，一般统一保留向量的左侧半平面。
+在计算几何中，用 $(\boldsymbol s, \boldsymbol t)$ 表示直线 ${st}$，一般统一保留向量的左侧半平面。
 
 ### 求两直线的交
 
-<img src="md-fig/fig17.svg" style="zoom: 140%;" />
+<img src="md-fig/fig17.svg" style="zoom: 110%;" />
 
-若交点存在，只需求出 $t=\dfrac{|A_sP|}{|A_sA_t|}$，则 $\vec P=\overrightarrow{A_s}+t\cdot  \overrightarrow{A_sA_t}$.
+若交点存在，只需求出 $t=\dfrac{|A_sP|}{|A_sA_t|}$，则 $\overrightarrow P=\overrightarrow{A_s}+t\cdot  \overrightarrow{A_sA_t}$.
 
 注意到 $t=\dfrac{|A_sP|}{|A_sA_t|}=\dfrac{|\overrightarrow{B_sB_t}\times \overrightarrow{B_sA_s}|}{|\overrightarrow{B_sB_t}\times \overrightarrow{A_sA_t}|}$，证明也不难。
 
@@ -1003,6 +1003,126 @@ double Calc_area(int n, Point *ch) {
 	return ans;
 }
 ```
+
+# P3256 [JLOI2013]赛车
+
+## 题目描述
+
+赛场上一共有 $n$ 辆车，分别称为 $g_1,g_2,...,g_n$.
+
+赛道是一条无限长的直线。最初，$g_i$ 位于距离起跑线前进 $x_i$ 的位置。比赛开始后，车辆 $g_i$ 将会以 $v_i$ 单位每秒的恒定速度行驶。
+
+过程中，如果一辆赛车曾经处于领跑位置的话，即没有其他的赛车跑在他的前面，这辆赛车最后就可以得奖。
+
+求哪些赛车将会得奖。输出赛车编号。
+
+$1\leq n\leq 10^4$，$0\leq x_i\leq 10^9$，$0\leq v_i\leq 10^9$.
+
+## 分析
+
+可以想到，每辆车的 $x-t$ 图像都是一条直线。在平面直角坐标系上画出这些直线。
+
+若取每条直线的左侧半平面，再与 $x$ 轴上侧平面、$y$ 轴右侧平面一起求交，则所有凸多边形上的直线可以获奖。
+
+直接跑排序增量法即可，时间复杂度 $\mathcal{O}(n\log n)$.
+
+注意到这题 $x_i$ 和 $v_i$ 的值域均为 $10^9$，所以运算过程中的数值会达到 $10^9\times 10^9=10^{18}$，
+
+因此需要使用 `long double`，并且需要 `const long double eps = 1e-18`.
+
+## 代码
+
+这道题不能直接去重，因为需要输出获奖车辆的编号，所以用 `std::map` 维护。
+
+同时，还需要在 `Line` 类中存储所有重合直线的编号，用 `std::vector` 维护。
+
+```cpp
+struct Line{
+	Point s, t;
+	vector<int> id;
+	Line() {};
+	Line(Point a, Point b) : s(a), t(b) {}
+	Line(Point a, Point b, vector<int> c) : s(a), t(b), id(c) {}
+	//...
+};
+//...
+signed main() {
+	int n, x[MAXN], v[MAXN], N = 0;
+	map<pair<int, int>, vector<int> > mp;
+	cin >> n;
+	for(int i = 1; i <= n; i++) cin >> x[i];
+	for(int i = 1; i <= n; i++) cin >> v[i];
+
+	for(int i = 1; i <= n; i++) mp[make_pair(x[i], v[i])].push_back(i);
+	L[N++] = Line(Point(0, 1), Point(0, 0));
+	L[N++] = Line(Point(0, 0), Point(1, 0));
+	for(auto it = mp.begin(); it != mp.end(); it++) {
+		pair<int, int> tmp = it -> first;
+		L[N++] = Line(Point(0, tmp.first),
+					  Point(1, tmp.first+tmp.second), it -> second);
+	}
+
+	Halfplane_intersection(N, L, p);
+
+	int ans[MAXN], cnt_ans = 0;
+	for(int i = st + 1; i <= ed; i++) {
+		for(int j = 0; j < L[que[i]].id.size(); j++) {
+			ans[cnt_ans++] = L[que[i]].id[j];
+		}
+	}
+	sort(ans, ans + cnt_ans);
+	cout << cnt_ans << endl;
+	for(int i = 0; i < cnt_ans; i++) cout << ans[i] << " "; cout << endl;
+	return 0;
+}
+```
+
+# P4250 [SCOI2015]小凸想跑步
+
+## 题目描述
+
+小凸晚上喜欢到操场跑步，今天他跑完两圈之后，他玩起了这样一个游戏。
+
+操场是个凸 $n$ 边形， $n$ 个顶点**按照逆时针**从 $0$ ∼ $n - 1$ 编号。
+
+现在小凸**随机**站在操场中的某个位置，标记为 $p$ 点。将 $p$ 点与 $n$ 个顶点各连一条边，形成 $n$ 个三角形。
+
+如果这时 $p$ 点， $0$ 号点， $1$ 号点形成的三角形的面积是 $n$ 个三角形中**最小**的一个，则认为这是一次正确站位。
+
+现在小凸想知道他一次站位正确的**概率**是多少。
+
+## 分析
+
+<img src="md-fig/fig19.svg" style="zoom: 90%;" />
+
+推一点式子。
+
+设 $\overrightarrow A=(x_a,y_a)$，$\overrightarrow B=(x_b, y_b)$，$\overrightarrow C=(x_c, y_c)$，$\overrightarrow D=(x_d, y_d)$，$\overrightarrow P=(x, y)$.
+
+由题意，
+$$
+\begin{array}{rl}
+|\overrightarrow {AB}\times \overrightarrow{AP}|&<&|\overrightarrow {CD}\times \overrightarrow{CP}|\\
+(x_b-x_a)(y-y_a) - (y_b-y_a)(x-x_a) &<& (x_d-x_c)(y-y_c)-(y_d-y_c)(x-x_c)\\
+\end{array}
+$$
+展开得，
+$$
+\begin{array}{rl}
+\text{左式}&=&(x_b-x_a)y-x_by_a+x_ay_a-(y_b-y_a)x+x_ay_b-x_ay_a\\
+\text{右式}&=&(x_d-x_c)y-x_dy_c+x_cy_c-(y_d-y_c)x+x_cy_d-x_cy_c
+\end{array}
+$$
+合并同类项，
+$$
+\begin{array}{l}
+&(x_b - x_a)(y - y_a) - (y_b - y_a)(x - x_a) < (x_d - x_c)(y - y_c) - (y_d - y_c)(x - x_c) \\
+\Rightarrow & (x_b - x_a + x_c - x_d)y + (y_a - y_b + y_d - y_c)x + (y_b x_a - x_b y_a - y_d x_c + x_d y_c) < 0
+\end{array}
+$$
+注意到，这是直线解析式的形式，于是转化为了半平面交问题。
+
+
 
 # 参考资料
 
