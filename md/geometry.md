@@ -153,6 +153,10 @@ struct Point{
 	}
 };
 typedef Point Vec;
+inline bool cmp1(Vec a, Vec b) {
+	return (fcmp(a.x, b.x) == -1) ||
+		   (!fcmp(a.x, b.x) && fcmp(a.y, b.y) == -1);
+}
 inline double dis(Point &a, Point &b) {
 	return (a - b).len();
 }
@@ -342,7 +346,7 @@ double Convex_hull_2d_S(int n, Point *p) {
 以上凸包为例。$i$ 在上凸包之下，当且仅当 $|\overrightarrow{ik}\times \overrightarrow{ij}|\geq 0$.
 
 ```cpp
-bool check_top(int x, int y) { //是否在上凸包下面
+bool check_top(int x, int y) {
 	auto k = top.lower_bound(x);
 	if(k == top.end())
 		return false;
@@ -358,7 +362,7 @@ bool check_top(int x, int y) { //是否在上凸包下面
 下凸包同理，$i$ 在下凸包之上，当且仅当 $|\overrightarrow{ik}\times \overrightarrow{ij}|\leq 0$
 
 ```cpp
-bool check_down(int x, int y) { //是否在下凸包上面
+bool check_down(int x, int y) {
 	auto k = down.lower_bound(x);
 	if(k == down.end())
 		return false;
