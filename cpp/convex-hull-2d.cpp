@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int N = 1e5 + 10;
+const int N = 1e5 + 20;
 const double PI = 3.1415926535898;
 const double eps = 1e-10;
 inline int fcmp(double x, double y) { //x>y->1, x=y->0, x<y->-1
