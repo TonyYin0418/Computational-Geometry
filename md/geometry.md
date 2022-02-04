@@ -905,7 +905,7 @@ $$
 
 半平面交有下面五种可能情况，每个半平面位于边界直线的阴影一侧。
 
-<img src="md-fig/fig18.pdf" style="zoom: 200%;" />
+<img src="md-fig/fig18.svg" style="zoom: 200%;" />
 
 $\rm{(iii)}$ 和 $\rm{(v)}$ 比较特殊，我们一般假设产生的交集总是有界或空的。
 

@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+//1.浮点数相关函数
 const int N = 5000;
 const double pi = 3.1415926535898;
 const double eps = 1e-10;
@@ -12,7 +13,7 @@ inline int fcmp(double x, double y) {
 	else return x > y ? 1 : -1;
 }
 inline double rd() { return (rand()) % 2 ? eps : -eps; }
-//****************************平面向量****************************
+//2.平面向量类
 struct Point{
 	int x, y;
 	Point(){};
@@ -23,9 +24,6 @@ struct Point{
 	}
 	friend Point operator - (const Point &a, const Point &b) {
 		return Point(a.x - b.x, a.y - b.y);
-	}
-	friend bool operator == (const Point &a, const Point &b) {
-		return fcmp(a.x, b.x) == 0 && fcmp(a.y, b.y == 0);
 	}
 	friend Point operator * (const double &a, const Point &b) {
 		return Point(a * b.x, a * b.y);
@@ -42,6 +40,9 @@ struct Point{
 	friend bool operator < (const Point &a, const Point &b) {
 		return fcmp(a.x, b.x ) == -1 ||
 			  (fcmp(a.x, b.x)== 0 && fcmp(a.y, b.y) == -1);
+	}
+	friend bool operator == (const Point &a, const Point &b) {
+		return fcmp(a.x, b.x) == 0 && fcmp(a.y, b.y == 0);
 	}
 	inline double len() {
 		return sqrt(1.0 * x * x + 1.0 * y * y);

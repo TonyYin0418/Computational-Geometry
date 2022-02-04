@@ -1,4 +1,3 @@
-#include <iostream>
 #include <bits/stdc++.h>
 #define int long long
 using namespace std;
@@ -51,7 +50,7 @@ bool check_down(int x, int y) { //是否在下凸包上面
 		   Point(j->first - x, j->second - y) <= 0;
 }
 bool remove_top(map<int, int>::iterator it) {
-	if(it == top.begin()) return false; //到边界就不删�?
+	if(it == top.begin()) return false; //到边界就不删了
 	if(++it == top.end()) return false; it--;
 	auto jt = it, kt = it;
 	jt--; kt++;
